@@ -299,10 +299,10 @@ our $PRINT_SUCCESSFUL_DIAGRAM;
 our $PRINT_DIAGRAM_TO_FILE;
 our $PRINT_SUCCESSFUL_DIAGRAM_TO_FILE;
 
-sub match {
+sub match($$) {
     my $self = shift;
-    my $Lparser = $_[0];
-    my $sentence = $_[1];
+    my $Lparser = $self->{parser};
+    my $sentence = ref($_[0]) ? shift() : $Lparser->create_sentence(shift);
 
     my $num_words;
     my $linkage_count = 0;
@@ -353,21 +353,10 @@ sub accepted {
     $curr_state == $self->{_final_state};
 }
 
-sub failed {
-    $_[0]->{_failed};
-}
+sub failed { $_[0]->{_failed} }
 
 
-sub item {
-    my $self = shift;
-    my @idx = @_;
-    if(@_){
-	@{$self->{_item}}[@_];
-    }
-    else {
-	@{$self->{_item}};
-    }
-}
+sub item { @_ ? @{$_[0]->{_item}}[@_] : @{$_[0]->{_item}} }
 
 1;
 

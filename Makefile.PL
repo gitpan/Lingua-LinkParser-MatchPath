@@ -8,11 +8,11 @@ WriteMakefile(
     ABSTRACT_FROM       => 'lib/Lingua/LinkParser/MatchPath.pm',
     PREREQ_PM => {
 	qw(
-	 Test::More 0
-	   Lex 0
-	 Parse::Yapp 0
-	 Exporter::Lite 0.01
-	 Lingua::LinkParser 1
+	   Exporter::Lite 0.01
+           Lex 0
+	   Lingua::LinkParser 1
+	   Parse::Yapp 0
+	   Test::More 0
 	   ),
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

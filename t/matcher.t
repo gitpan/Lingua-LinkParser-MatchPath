@@ -1,15 +1,31 @@
-use Test::More qw(no_plan);
+use Test::More tests => 46;
 ok(1);
 
-use ExtUtils::testlib;
 use strict;
 use Data::Dumper;
+use ExtUtils::testlib;
 use Lingua::LinkParser;
 use Lingua::LinkParser::MatchPath;
 
 #$Lingua::LinkParser::MatchPath::DEBUG = 1;
 
-my @pattern = grep{!/^#/} grep{$_} split /\n+/, <<'.';
+my $parser = new Lingua::LinkParser;
+my $o = Lingua::LinkParser::MatchPath->new( parser => $parser );
+
+$o->create_matcher($_) foreach grep{!/^#/} grep{$_} map{chomp; $_} <DATA>;
+
+my $text = (grep{!/^#/} grep{$_} split /\n+/, <<'TEXT')[0];
+John activates Mary in a bad way.
+TEXT
+
+my $sentence = $parser->create_sentence($text);
+foreach (@{$o->matcher}){
+  ok($_->template);
+  ok($_->match($sentence));
+  ok($_->match($text));
+}
+
+__END__
 /^J/ </^S/> !/^inhibit/ <Os> /mary/i;
 /^J/ </^S/> activates </^O/> /mary/i;
 /^J/ </^S/> !inhibit </^O/> /mary/i;
@@ -25,29 +41,4 @@ my @pattern = grep{!/^#/} grep{$_} split /\n+/, <<'.';
 /^J/ #( <Sp> _v_ | <AN> _a_ | <Ss> _v_ )
 /^J/ !( <Sp> _v_ ) @( <Ss> _v_ <MVp> in ) <Js>  _n_
 /^J/ <Ss> !inhibit #<Os> /mary/i <MVp> in <Js> way #<A> /.+/ #<Ds> /.+/
-.
 
-use Lingua::LinkParser::MatchPath::Lex;
-foreach my $p (@pattern){
-  last;
-  (
-   my $l = Lingua::LinkParser::MatchPath::Lex->new(
-						   debug => 1,
-						  )
-  )->load($p);
-  1 while $l->lex;
-}
-
-
-our $parser = new Lingua::LinkParser;
-our $text = (grep{!/^#/} grep{$_} split /\n+/, <<'TEXT')[0];
-John activates Mary in a bad way.
-TEXT
-
-our $sentence = $parser->create_sentence($text);
-
-foreach my $p (@pattern){
-    my $m = path_matcher($p);
-    my $result = $m->match($parser, $sentence);
-    ok($result);
-}

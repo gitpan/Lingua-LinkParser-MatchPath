@@ -1,10 +1,11 @@
 package Lingua::LinkParser::MatchPath::BuildSM;
+
 use strict;
 use Data::Dumper;
+use List::Util qw(max);
 
 #open STDERR, ">/dev/null";
-sub print_stat {
-}
+sub print_stat {}
 
 sub new {
     my $class = shift;
@@ -23,9 +24,7 @@ sub new {
     }, $class;
 }
 
-sub template {
-    $_[0]->{_template};
-}
+sub template { $_[0]->{_template} }
 
 sub reset {
     my $self = shift;
@@ -84,7 +83,6 @@ sub arc_template {
 
 
 
-use List::Util qw(max);
 sub add_state {
     my $self = shift;
     my %arg = @_;

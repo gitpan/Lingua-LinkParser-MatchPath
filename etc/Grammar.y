@@ -12,11 +12,14 @@ use Data::Dumper;
 $Data::Dumper::Terse = 1;
 $Data::Dumper::Ident = 0;
 
-sub print_stat {
+# this is made for debugging
+sub print_status {
 #  print $_[0]
 }
+
+# this is made for translating
 sub translate_regexp {
-  shift =~ m,/(.+?)/([i])?$,;
+  $_[0] =~ m,/(.+?)/([i])?$,o;
   $2 eq 'i' ? qr/$1/i : qr/$1/;
 }
 
@@ -26,14 +29,14 @@ sub translate_regexp {
 
 START:
         {
-	  print_stat "Initialize the state machine\n";
+	  print_status "Initialize the state machine\n";
 	}
         RULE
 	EOR
         {
           $_[0]->{_sm}->add_state(final => 1);
           $_[0]->{_sm}->add_arc();
-	  print_stat "THE END\n";
+	  print_status "THE END\n";
 	}
 	;
 
@@ -51,6 +54,7 @@ RULE:
 
 
 LINKS:
+	# EAP stands for qw(EXCLM AT POUND);
 	EXCLM_SIGN {
 	  $_[0]->{_sm}->ENTER_EXCLM;
 	  $_[0]->{_sm}->{_just_seen_EAP} = 1;
@@ -143,13 +147,13 @@ LINK:
 
 LABEL_TOKEN:
         LABEL {
-          print_stat "got a label $_[1]\n";
+          print_status "got a label $_[1]\n";
 	  $_[1] =~ s/<(.+?)>/$1/;
 	  [ 'L' => $_[1] ]
 	}
 	|
 	LABEL_REGEXP {
-          print_stat "got a label regexp $_[1]\n";
+          print_status "got a label regexp $_[1]\n";
 	  $_[1] =~ s/<(.+?)>/$1/;
 	  [ 'LR' => translate_regexp($_[1]) ]
 	}
@@ -178,7 +182,7 @@ WORD_TOKEN:
 
 PWORD_CONJUNCT:
         LPAREN {
-	  print_stat "PWORD conjunct\n";
+	  print_status "PWORD conjunct\n";
           $_[0]->{_sm}->add_state();
           $_[0]->{_sm}->add_arc();
 	}
@@ -197,14 +201,14 @@ WORD_CONJUNCT:
 	WORD_CONJUNCT
         |
         WORD_ATOM {
-	  print_stat Dumper $_[1];
+	  print_status Dumper $_[1];
           $_[0]->{_sm}->add_state();
           $_[0]->{_sm}->add_arc(word => $_[1]);
 	  $_[1];
 	}
 	|
 	LPAREN {
-	  print_stat "within word conjunct\n";
+	  print_status "within word conjunct\n";
 	  $_[0]->{_sm}->add_state();
           $_[0]->{_sm}->add_arc();
 	}
@@ -218,7 +222,7 @@ WORD_CONJUNCT:
 
 WORD_ATOM:
         WORD {
-	  print_stat "got a word $_[1] and add an arc\n";
+	  print_status "got a word $_[1] and add an arc\n";
 	  my $w = [
 		   'W' => $_[1]
 		   => $_[0]->{_sm}->{_wordcapture}
@@ -229,7 +233,7 @@ WORD_ATOM:
 	}
 	|
 	WORD_REGEXP {
-	  print_stat "got a word regexp $_[1] and add an arc\n";
+	  print_status "got a word regexp $_[1] and add an arc\n";
 	  my $w = [
 		   'WR' => translate_regexp($_[1])
 		   => $_[0]->{_sm}->{_wordcapture}
@@ -239,7 +243,7 @@ WORD_ATOM:
 	}
 	|
 	POS {
-	  print_stat "got a pos tag $_[1] and add an arc\n";
+	  print_status "got a pos tag $_[1] and add an arc\n";
 	  $_[1] =~ s/_(.)_/$1/;
 	  my $w = [
 		   'P' => $_[1]
@@ -250,7 +254,7 @@ WORD_ATOM:
 	}
 	|
         EXCLM_SIGN WORD {
-	  print_stat "got a negative word $_[1]$_[2] and add an arc\n";
+	  print_status "got a negative word $_[1]$_[2] and add an arc\n";
 	  my $w = [
 		   'NW' => $_[2]
 		   => $_[0]->{_sm}->{_wordcapture}
@@ -260,7 +264,7 @@ WORD_ATOM:
 	}
 	|
 	EXCLM_SIGN WORD_REGEXP {
-	  print_stat "got a negative word regexp $_[1]$_[2] and add an arc\n";
+	  print_status "got a negative word regexp $_[1]$_[2] and add an arc\n";
 	  my $w = [
 		   'NWR' => translate_regexp($_[2])
 		   => $_[0]->{_sm}->{_wordcapture}
@@ -270,7 +274,7 @@ WORD_ATOM:
 	}
 	|
 	EXCLM_SIGN POS {
-	  print_stat "got a negative pos tag $_[1]$_[2] and add an arc\n";
+	  print_status "got a negative pos tag $_[1]$_[2] and add an arc\n";
 	  $_[2] =~ s/_(.)_/$1/;
 	  my $w = [
 		   'NP' => $_[2]
