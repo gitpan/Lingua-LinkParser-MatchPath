@@ -1,0 +1,13 @@
+Changes
+etc/Grammar.y
+lib/Lingua/LinkParser/MatchPath.pm
+lib/Lingua/LinkParser/MatchPath/BuildSM.pm
+lib/Lingua/LinkParser/MatchPath/Lex.pm
+lib/Lingua/LinkParser/MatchPath/Parser.pm
+lib/Lingua/LinkParser/MatchPath/SM.pm
+lib/Lingua/LinkParser/MatchPath/SMContext.pm
+Makefile.PL
+MANIFEST
+META.yml			# Will be created by "make dist"
+t/00.load.t
+t/matcher.t
