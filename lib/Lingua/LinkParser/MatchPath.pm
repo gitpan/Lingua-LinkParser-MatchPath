@@ -7,7 +7,7 @@ use Lingua::LinkParser::MatchPath::Lex;
 use Lingua::LinkParser::MatchPath::Parser;
 use Lingua::LinkParser::MatchPath::SM;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 our @ISA = qw(Lingua::LinkParser);
 
 use Exporter::Lite;

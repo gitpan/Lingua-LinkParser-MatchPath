@@ -2,3 +2,6 @@ Revision history for Lingua-LinkParser-MatchPath
 
 0.01  Sun,  5 Sep 2004 15:50:49 +0800
 	- version 0.01
+
+0.02  Sun,  5 Sep 2004 16:02:01 +0800
+	- added LinkParser dependency

@@ -12,6 +12,7 @@ WriteMakefile(
 	   Lex 0
 	 Parse::Yapp 0
 	 Exporter::Lite 0.01
+	 Lingua::LinkParser 1
 	   ),
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
